@@ -8,6 +8,7 @@
     >
       <h3 class="title">系统登陆</h3>
       <el-form-item prop="username">
+        <span class="svg-container"><icon-svg icon-class="yonghu" /></span>
         <el-input
           ref="username"
           v-model="loginForm.username"
@@ -20,15 +21,18 @@
       </el-form-item>
 
       <el-form-item prop="password">
+        <span class="svg-container"><icon-svg icon-class="mima" /></span>
         <el-input
           ref="password"
           v-model="loginForm.password"
           placeholder="请输入密码"
+          :type="passwordType"
           name="password"
           tabindex="2"
           auto-complete="off"
           @keyup.enter.native="submitLogin"
         />
+        <span class="show-pwd" @click="showPwd"><icon-svg :icon-class="passwordType === 'password' ? 'buxianshimima' : 'eye'" /></span>
       </el-form-item>
       <el-button
         v-loading="loading"
@@ -50,6 +54,7 @@ export default {
   name: 'Login',
   data() {
     return {
+      passwordType: 'password',
       loading: false,
       loginForm: {
         username: '1',
@@ -64,6 +69,16 @@ export default {
     }
   },
   methods: {
+    showPwd() {
+      if (this.passwordType === 'password') {
+        this.passwordType = ''
+      } else {
+        this.passwordType = 'password'
+      }
+      this.$nextTick(() => {
+        this.$refs.password.focus()
+      })
+    },
     async submitLogin() {
       const valid = this.$refs.loginForm.validate()
       if (valid) {
@@ -109,6 +124,7 @@ export default {
     .el-input {
       display: inline-block;
       height: 47px;
+      width: 92%;
       input {
         background: transparent;
         border: 0px;
@@ -152,7 +168,14 @@ export default {
       margin: 0 auto;
       overflow: hidden;
     }
-
+    .svg-container {
+      padding: 6px 5px 6px 15px;
+      color: $dark_gray;
+      vertical-align: middle;
+      width: 30px;
+      font-size: 16px;
+      display: inline-block;
+    }
     .title {
       font-size: 26px;
       color: $light_gray;

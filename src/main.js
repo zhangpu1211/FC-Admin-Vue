@@ -7,9 +7,11 @@ import ElementUI from 'element-ui'
 import '@/styles/index.scss' // global css
 import 'element-ui/lib/theme-chalk/index.css'
 
-// import { initMenu } from './utils/menu'
-// import 'font-awesome/css/font-awesome.min.css'
+import '@/assets/icon/iconfont.js'
+import SvgIcon from './components/SvgIcon/index'
 
+// 全局注册icon-svg
+Vue.component('icon-svg', SvgIcon)
 Vue.config.productionTip = false
 
 Vue.use(ElementUI)
