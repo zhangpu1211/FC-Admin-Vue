@@ -80,26 +80,26 @@ export default {
       })
     },
     async submitLogin() {
-      const valid = this.$refs.loginForm.validate()
-      if (valid) {
-        console.log(valid)
-        const resp = await Login.doLogin(this.loginForm)
-        console.log(resp)
-        if (resp) {
-          window.sessionStorage.setItem('user', JSON.stringify(resp.obj))
-          const path = this.$route.query.redirect
-          this.$router.replace(
-            path == '/' || path == undefined ? '/home' : path
-          )
+      this.$refs.loginForm.validate(async(valid) => {
+        if (valid) {
+          const resp = await Login.doLogin(this.loginForm)
+          if (resp) {
+            window.sessionStorage.setItem('user', JSON.stringify(resp.obj))
+            const path = this.$route.query.redirect
+            console.log(path)
+            this.$router.replace(
+              path === '/' || path === undefined ? '/home' : path
+            )
+          }
+        } else {
+          this.$message({
+            showClose: true,
+            message: '请输入用户名或密码',
+            type: 'error'
+          })
+          return false
         }
-      } else {
-        this.$message({
-          showClose: true,
-          message: '请输入用户名或密码',
-          type: 'error'
-        })
-        return false
-      }
+      })
     }
   }
 }
@@ -135,9 +135,9 @@ export default {
         height: 47px;
         caret-color: $cursor;
         &:-webkit-autofill {
-           box-shadow: 0 0 0px 1000px $bg inset !important;
-           -webkit-text-fill-color: $cursor !important;
-         }
+          box-shadow: 0 0 0px 1000px $bg inset !important;
+          -webkit-text-fill-color: $cursor !important;
+        }
       }
     }
     .el-form-item {

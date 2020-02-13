@@ -160,4 +160,7 @@ export default {
       align-items: center;
     }
   }
+  .svg-container {
+    font-size: 28px;
+  }
 </style>
