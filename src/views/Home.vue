@@ -13,6 +13,15 @@
           @open="handleOpen"
           @close="handleClose"
         >
+          <el-submenu v-for="(item,index) in routes" :key="index" :index="index+''">
+            <template slot="title">
+              <i style="color: #409eff;margin-right: 5px;" class="el-icon-menu" />
+              <span>{{ item.name }}</span>
+            </template>
+            <el-menu-item v-for="(child,indexj) in item.children" :key="indexj" :index="child.path">
+              {{ child.name }}
+            </el-menu-item>
+          </el-submenu>
           <el-submenu index="1">
             <template slot="title">
               <i class="el-icon-location" />
@@ -49,7 +58,7 @@
             </span>
             <div class="breadcrumb">
               <el-breadcrumb
-                v-if="this.$router.currentRoute.path != '/home'"
+                v-if="this.$router.currentRoute.path !== '/home'"
                 separator-class="el-icon-arrow-right"
               >
                 <el-breadcrumb-item :to="{ path: '/home' }">首页</el-breadcrumb-item>
@@ -79,7 +88,9 @@
             </el-dropdown>
           </div>
         </el-header>
-        <el-main>Main</el-main>
+        <el-main>
+          <router-view />
+        </el-main>
       </el-container>
     </el-container>
   </div>
@@ -99,6 +110,11 @@ export default {
       }
     }
   },
+  computed: {
+    routes() {
+      return this.$router.options.routes.filter(item => !item.hidden)
+    }
+  },
   methods: {
     handleOpen(key, keyPath) {
       console.log(key, keyPath)
@@ -112,7 +128,7 @@ export default {
       this.isCollapse ? this.width = 'auto' : this.width = '200px'
     },
     goChat() {
-      return null
+      this.$router.push('/chat')
     },
     commandHandler(cmd) {
       if (cmd == 'logout') {
@@ -162,5 +178,8 @@ export default {
   }
   .svg-container {
     font-size: 28px;
+  }
+  .breadcrumb{
+    margin-left: 10px;
   }
 </style>
