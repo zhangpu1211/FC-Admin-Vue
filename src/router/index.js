@@ -1,8 +1,8 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 import FriendChat from '../views/chat/FriendChat'
-import RoleMana from '../views/sys/RoleMana'
-import PermissMana from '../views/sys/PermissMana'
+import RoleMana from '../views/sys/SysRole'
+import PermissMana from '../views/sys/SysPermiss'
 Vue.use(VueRouter)
 
 const routes = [

@@ -86,9 +86,8 @@ export default {
           if (resp) {
             window.sessionStorage.setItem('user', JSON.stringify(resp.obj))
             const path = this.$route.query.redirect
-            console.log(path)
             this.$router.replace(
-              path === '/' || path === undefined ? '/home' : path
+              path === '/' || path === undefined ? '/dashboard/analyse' : path
             )
           }
         } else {

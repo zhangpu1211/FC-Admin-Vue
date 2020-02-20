@@ -10,7 +10,7 @@ import NProgress from 'nprogress'
 import 'nprogress/nprogress.css'
 import '@/assets/icon/iconfont.js'
 import SvgIcon from './components/SvgIcon/index'
-
+import menu from './models/menu'
 // 全局注册icon-svg
 Vue.component('icon-svg', SvgIcon)
 Vue.config.productionTip = false
@@ -18,18 +18,16 @@ Vue.config.productionTip = false
 Vue.use(ElementUI)
 
 router.beforeEach((to, from, next) => {
-  if (to.path == '/') {
-    NProgress.start()
-    next()
-  } else {
-    if (window.sessionStorage.getItem('user')) {
-      // initMenu(router, store)
-      NProgress.start()
-      next()
+  NProgress.start()
+  if (window.sessionStorage.getItem('user')) {
+    menu.getMenus(router, store)
+    if (to.path === '/' || to.path === '/home') {
+      next('/dashboard/analyse')
     } else {
-      NProgress.start()
-      next('/?redirect=' + to.path)
+      next()
     }
+  } else {
+    next('/')
   }
 })
 router.afterEach(transition => {

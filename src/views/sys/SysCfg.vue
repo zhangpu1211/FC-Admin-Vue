@@ -1,10 +1,10 @@
 <template>
-  <div>permiss</div>
+  <div>SysCfg</div>
 </template>
 
 <script>
 export default {
-  name: 'PermissMana'
+  name: 'SysCfg'
 }
 </script>
 

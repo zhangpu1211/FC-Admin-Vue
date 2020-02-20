@@ -1,53 +1,25 @@
 <template>
   <div style="height: 100%">
     <el-container>
-      <el-aside class="aside-container" :width="width">
+      <el-aside class="aside-container transition_dom" :width="width">
         <el-menu
           router
-          unique-opened
+          :default-active="$route.path"
           class="aside-menu"
           :collapse="isCollapse"
           background-color="#304156"
           text-color="#fff"
           active-text-color="#ffd04b"
-          @open="handleOpen"
-          @close="handleClose"
         >
           <el-submenu v-for="(item,index) in routes" :key="index" :index="index+''">
             <template slot="title">
-              <i style="color: #409eff;margin-right: 5px;" class="el-icon-menu" />
+              <i style="color: #409eff;margin-right: 5px;" :class="item.iconCls" />
               <span>{{ item.name }}</span>
             </template>
             <el-menu-item v-for="(child,indexj) in item.children" :key="indexj" :index="child.path">
               {{ child.name }}
             </el-menu-item>
           </el-submenu>
-          <el-submenu index="1">
-            <template slot="title">
-              <i class="el-icon-location" />
-              <span>导航一</span>
-            </template>
-            <el-menu-item-group>
-              <template slot="title">分组一</template>
-              <el-menu-item index="1-1">选项1</el-menu-item>
-              <el-menu-item index="1-2">选项2</el-menu-item>
-            </el-menu-item-group>
-            <el-menu-item-group title="分组2">
-              <el-menu-item index="1-3">选项3</el-menu-item>
-            </el-menu-item-group>
-          </el-submenu>
-          <el-menu-item index="2">
-            <i class="el-icon-menu" />
-            <span slot="title">导航二</span>
-          </el-menu-item>
-          <el-menu-item index="3" disabled>
-            <i class="el-icon-document" />
-            <span slot="title">导航三</span>
-          </el-menu-item>
-          <el-menu-item index="4">
-            <i class="el-icon-setting" />
-            <span slot="title">导航四</span>
-          </el-menu-item>
         </el-menu>
       </el-aside>
       <el-container>
@@ -58,10 +30,9 @@
             </span>
             <div class="breadcrumb">
               <el-breadcrumb
-                v-if="this.$router.currentRoute.path !== '/home'"
                 separator-class="el-icon-arrow-right"
               >
-                <el-breadcrumb-item :to="{ path: '/home' }">首页</el-breadcrumb-item>
+                <el-breadcrumb-item :to="{ path: '/dashboard/analyse' }">首页</el-breadcrumb-item>
                 <el-breadcrumb-item>{{ this.$router.currentRoute.name }}</el-breadcrumb-item>
               </el-breadcrumb>
             </div>
@@ -107,25 +78,22 @@ export default {
       user: {
         name: '111',
         userface: '111'
-      }
+      },
+      active: '1'
     }
   },
   computed: {
     routes() {
-      return this.$router.options.routes.filter(item => !item.hidden)
+      console.log(this.$store.state.routes)
+      return this.$store.state.routes
+      // return this.$router.options.routes.filter(item => !item.hidden)
     }
   },
   methods: {
-    handleOpen(key, keyPath) {
-      console.log(key, keyPath)
-    },
-    handleClose(key, keyPath) {
-      console.log(key, keyPath)
-    },
     changeFold() {
       this.isCollapse = !this.isCollapse
       this.isCollapse ? this.isFold = 'hamburger' : this.isFold = 'hamburger-fold'
-      this.isCollapse ? this.width = 'auto' : this.width = '200px'
+      this.isCollapse ? this.width = '64px' : this.width = '200px'
     },
     goChat() {
       this.$router.push('/chat')
@@ -154,6 +122,9 @@ export default {
 </script>
 
 <style lang="scss">
+  .transition_dom {
+    transition: all 0.25s linear 0s;
+  }
   .el-container {
     height: 100%;
   }
@@ -177,9 +148,12 @@ export default {
     }
   }
   .svg-container {
-    font-size: 28px;
+    font-size: 20px;
   }
   .breadcrumb{
     margin-left: 10px;
+  }
+  .el-submenu .el-menu-item{
+    background-color: #1f2d3d!important;
   }
 </style>
