@@ -1,7 +1,8 @@
 import '../utils/api'
 import { getRequest } from '../utils/api'
 
-class Menu {
+class SysMenu {
+  // 获取登录用户的资源
   async getMenus(router, store) {
     if (store.state.routes.length > 0) {
       console.log(store.state.routes.length > 0)
@@ -15,6 +16,10 @@ class Menu {
         store.commit('initRoutes', fmtRoutes)
       }
     }
+  }
+  // 获取系统所有的资源
+  async getSysAllMenus() {
+    return await getRequest('/system/menu/sysMenus')
   }
 }
 const formatRoutes = (routes) => {
@@ -57,4 +62,4 @@ const formatRoutes = (routes) => {
   })
   return fmRoutes
 }
-export default new Menu()
+export default new SysMenu()

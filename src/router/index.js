@@ -1,8 +1,7 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 import FriendChat from '../views/chat/FriendChat'
-import RoleMana from '../views/sys/SysRole'
-import PermissMana from '../views/sys/SysPermiss'
+
 Vue.use(VueRouter)
 
 const routes = [
@@ -25,24 +24,6 @@ const routes = [
         name: '在线聊天',
         component: FriendChat,
         hidden: true
-      }
-    ]
-  },
-  {
-    path: '/sys',
-    name: 'Sys',
-    component: () =>
-      import(/* webpackChunkName: "about" */ '@/views/Home.vue'),
-    children: [
-      {
-        path: '/sys/permiss',
-        name: '权限管理',
-        component: PermissMana
-      },
-      {
-        path: '/sys/role',
-        name: '角色管理',
-        component: RoleMana
       }
     ]
   }

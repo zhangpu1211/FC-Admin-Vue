@@ -57,8 +57,8 @@ export default {
       passwordType: 'password',
       loading: false,
       loginForm: {
-        username: '1',
-        password: '12'
+        username: 'admin',
+        password: '123'
       },
       rules: {
         username: [
@@ -80,17 +80,23 @@ export default {
       })
     },
     async submitLogin() {
+      this.loading = true
       this.$refs.loginForm.validate(async(valid) => {
         if (valid) {
           const resp = await Login.doLogin(this.loginForm)
+          console.log(resp)
           if (resp) {
+            this.loading = false
             window.sessionStorage.setItem('user', JSON.stringify(resp.obj))
             const path = this.$route.query.redirect
             this.$router.replace(
               path === '/' || path === undefined ? '/dashboard/analyse' : path
             )
+          } else {
+            this.loading = false
           }
         } else {
+          this.loading = false
           this.$message({
             showClose: true,
             message: '请输入用户名或密码',
