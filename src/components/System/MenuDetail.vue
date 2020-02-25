@@ -1,11 +1,11 @@
 <template>
   <div>
-    <el-dialog :title="dtitle" :visible.sync="visible" :show="show" width="30%" @close="$emit('update:show', false)">
+    <el-dialog :title="dtitle" :visible.sync="visible" :show="show" width="30%" @close="handleClose">
       <div>
-        <el-form ref="form" :model="form" :rules="rules" label-width="80px">
+        <el-form ref="form" :model="data" :rules="rules" label-width="80px">
           <el-form-item label="上级权限">
             <ElTreeSelect
-              :value="valueId"
+              :value="data.parentId"
               :options="permiss"
               :clearable="isClearable"
               :accordion="isAccordion"
@@ -13,22 +13,22 @@
             />
           </el-form-item>
           <el-form-item label="权限名称">
-            <el-input v-model="form.name" />
+            <el-input v-model="data.name" />
           </el-form-item>
           <el-form-item label="匹配路径">
-            <el-input v-model="form.url" />
+            <el-input v-model="data.url" />
           </el-form-item>
           <el-form-item label="访问路径">
-            <el-input v-model="form.path" />
+            <el-input v-model="data.path" />
           </el-form-item>
           <el-form-item label="组件名称">
-            <el-input v-model="form.component" />
+            <el-input v-model="data.component" />
           </el-form-item>
           <el-form-item label="图标类名">
-            <el-input v-model="form.iconCls" />
+            <el-input v-model="data.iconCls" />
           </el-form-item>
           <el-form-item label="权重">
-            <el-input v-model="form.sort" placeholder="权重越大越靠前" />
+            <el-input v-model="data.sort" placeholder="权重越大越靠前" />
           </el-form-item>
         </el-form>
       </div>
@@ -54,56 +54,66 @@ export default {
       default: false
     },
     title: String,
-    menu: Array,
     permiss: Array,
-    menuUpdate: Object
+    data: {
+      type: Object,
+      default: () => {}
+    }
   },
   data() {
     return {
-      popVisible: true,
-      visible: this.show,
+      visible: false,
       dtitle: this.title,
-      options: this.permiss,
       isClearable: true, // 可清空（可选）
-      isAccordion: true, // 可收起（可选）
-      valueId: 0, // 初始ID（可选）
-      value: '',
+      isAccordion: true, // 可收起（可选））
       rules: {
         name: [{ required: true, message: '请输入权限名称', trigger: 'blur' }],
         url: [{ required: true, message: '请输入匹配路径', trigger: 'blur' }],
         path: [{ required: true, message: '请输入访问路径', trigger: 'blur' }],
         component: [{ required: true, message: '请输入组件名称', trigger: 'blur' }]
-      },
-      form: {}
+      }
     }
   },
   watch: {
     show(val) {
       this.visible = this.show
-    },
-    menuUpdate() {
-      Object.assign(this.form, this.menuUpdate())
-      console.log('form:' + this.form)
     }
   },
   methods: {
     handleChange(value) {
       console.log(value)
     },
-    addMenu() {
-      this.$refs.form.validate(async(valid) => {
-        if (valid) {
-          const resp = await SysPermiss.addPermiss(this.form)
-          this.$emit('succhandle', resp)
-        } else {
-          this.$message({
-            showClose: true,
-            message: '请检查输入',
-            type: 'error'
-          })
-          return false
-        }
-      })
+    async addMenu() {
+      if (this.data.id) {
+        console.log(this.data.id)
+        this.$refs.form.validate(async(valid) => {
+          if (valid) {
+            const resp = await SysPermiss.updatePermiss(this.data)
+            this.$emit('succhandle', resp)
+          } else {
+            this.$message({
+              showClose: true,
+              message: '请检查输入',
+              type: 'error'
+            })
+            return false
+          }
+        })
+      } else {
+        this.$refs.form.validate(async(valid) => {
+          if (valid) {
+            const resp = await SysPermiss.addPermiss(this.data)
+            this.$emit('succhandle', resp)
+          } else {
+            this.$message({
+              showClose: true,
+              message: '请检查输入',
+              type: 'error'
+            })
+            return false
+          }
+        })
+      }
     },
     handleNodeClick(data) {
       console.log(data)
@@ -111,8 +121,10 @@ export default {
     // 取值
     getValue(value) {
       this.valueId = value
-      this.form.parentId = this.valueId
-      console.log(this.valueId)
+      this.form.parentId = value
+    },
+    handleClose() {
+      this.$emit('update:show', false)
     }
   }
 }

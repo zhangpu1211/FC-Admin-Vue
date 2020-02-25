@@ -68,7 +68,7 @@
         </el-table>
       </template>
     </div>
-    <MenuDetail title="添加权限" :show.sync="isVisible" :data="menuUpdate" :permiss="arr" @succhandle="succhandle" />
+    <MenuDetail title="添加权限" :show.sync="isVisible" :data="menuDate" :permiss="arr" @succhandle="succhandle" />
   </div>
 </template>
 
@@ -87,15 +87,7 @@ export default {
       loading: false,
       expand: false,
       isVisible: false,
-      menuUpdate: {
-        parentId: 0,
-        name: '测试',
-        url: '/',
-        path: '/home',
-        component: 'Home',
-        iconCls: '',
-        sort: 0
-      }
+      menuDate: {}
     }
   },
   computed: {
@@ -130,17 +122,8 @@ export default {
     collapseAll() {
       this.forArr(this.menus, false)
     },
-    showAddView() {
-      this.isVisible = true
-    },
-    showEditView(data) {
-      this.isVisible = true
-      this.menuUpdate = data
-      console.log(data)
-    },
-    succhandle(resp) {
-      console.log(resp)
-      this.menuUpdate = {
+    emptyMenu() {
+      const menudata = {
         parentId: 0,
         name: '测试',
         url: '/',
@@ -149,6 +132,19 @@ export default {
         iconCls: '',
         sort: 0
       }
+      this.menuDate = menudata
+    },
+    showAddView() {
+      this.emptyMenu()
+      this.isVisible = true
+    },
+    showEditView(data) {
+      this.isVisible = true
+      Object.assign(this.menuDate, data)
+    },
+    succhandle(resp) {
+      console.log(resp)
+      this.emptyMenu()
       this.isVisible = false
       this.initMenus()
       console.log('init')
