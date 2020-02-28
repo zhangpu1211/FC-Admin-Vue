@@ -4,12 +4,16 @@ class SysRole {
     const res = await getRequest('/system/role')
     return res
   }
+  async getMenuIdsByRid(rid) {
+    const res = await getRequest('/system/mids/' + rid)
+    return res
+  }
   async addRole(form) {
     const res = await postRequest('/system/role', form)
     return res
   }
   async deleteRole(id) {
-    const res = await deleteRequest('/system/role' + id)
+    const res = await deleteRequest('/system/role/' + id)
     return res
   }
   async updateRole(form) {

@@ -20,11 +20,6 @@ Vue.use(ElementUI)
 router.beforeEach((to, from, next) => {
   NProgress.start()
   if (to.path === '/') {
-    // if (window.sessionStorage.getItem('user')) {
-    //   next({ path: from.fullPath })
-    // } else {
-    //   next()
-    // }
     next()
   } else {
     if (window.sessionStorage.getItem('user')) {

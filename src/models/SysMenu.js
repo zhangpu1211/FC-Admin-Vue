@@ -1,5 +1,5 @@
 import '../utils/api'
-import { getRequest } from '../utils/api'
+import { getRequest, putRequest } from '../utils/api'
 
 class SysMenu {
   // 获取登录用户的资源
@@ -9,6 +9,7 @@ class SysMenu {
       return true
     } else {
       const data = await getRequest('/system/config/menus')
+      console.log(data)
       if (data) {
         console.log('1111' + data)
         const fmtRoutes = formatRoutes(data)
@@ -20,6 +21,9 @@ class SysMenu {
   // 获取系统所有的资源
   async getSysAllMenus() {
     return await getRequest('/system/menu/sysMenus')
+  }
+  async doUpdateMenus(url) {
+    return await putRequest('/system/crole/' + url)
   }
 }
 const formatRoutes = (routes) => {

@@ -45,7 +45,7 @@
               style="margin-right: 8px;color: #000000"
               @click="goChat"
             />
-            <el-avatar :size="36" style="margin-right: 8px" src="https://cube.elemecdn.com/3/7c/3ea6beec64369c2642b92c6726f1epng.png" />
+            <el-avatar :size="36" style="margin-right: 8px" :src="user.userface" />
             <el-dropdown class="userInfo" @command="commandHandler">
               <span class="el-dropdown-link">
                 {{ user.name }}
@@ -75,15 +75,13 @@ export default {
       isCollapse: false,
       width: '200px',
       isFold: 'hamburger-fold',
-      user: {
-        name: '111',
-        userface: '111'
-      },
+      user: JSON.parse(window.sessionStorage.getItem('user')),
       active: '1'
     }
   },
   computed: {
     routes() {
+      console.log('home routes')
       console.log(this.$store.state.routes)
       return this.$store.state.routes
       // return this.$router.options.routes.filter(item => !item.hidden)
