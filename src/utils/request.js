@@ -1,17 +1,8 @@
 import axios from 'axios'
-import { MessageBox, Message } from 'element-ui'
+import { Message } from 'element-ui'
 import store from '@/store'
-import { getToken } from '@/utils/auth'
-
-// create an axios instance
-const service = axios.create({
-  baseURL: process.env.VUE_APP_BASE_API, // url = base url + request url
-  // withCredentials: true, // send cookies when cross-domain requests
-  timeout: 5000 // request timeout
-})
-
-// request interceptor
-service.interceptors.request.use(
+import { getToken, removeToken } from './auth'
+axios.interceptors.request.use(
   config => {
     // do something before request is sent
 
@@ -19,7 +10,7 @@ service.interceptors.request.use(
       // let each request carry token
       // ['X-Token'] is a custom headers key
       // please modify it according to the actual situation
-      config.headers['X-Token'] = getToken()
+      config.headers['Authorization'] = 'Bearer' + getToken()
     }
     return config
   },
@@ -31,7 +22,7 @@ service.interceptors.request.use(
 )
 
 // response interceptor
-service.interceptors.response.use(
+axios.interceptors.response.use(
   /**
    * If you want to get http information such as headers or status
    * Please return  response => response
@@ -42,44 +33,88 @@ service.interceptors.response.use(
    * Here is just an example
    * You can also judge the status by HTTP Status Code
    */
-  response => {
-    const res = response.data
-
-    // if the custom code is not 20000, it is judged as an error.
-    if (res.code !== 20000) {
-      Message({
-        message: res.message || 'Error',
-        type: 'error',
-        duration: 5 * 1000
-      })
-
-      // 50008: Illegal token; 50012: Other clients logged in; 50014: Token expired;
-      if (res.code === 50008 || res.code === 50012 || res.code === 50014) {
-        // to re-login
-        MessageBox.confirm('You have been logged out, you can cancel to stay on this page, or log in again', 'Confirm logout', {
-          confirmButtonText: 'Re-Login',
-          cancelButtonText: 'Cancel',
-          type: 'warning'
-        }).then(() => {
-          store.dispatch('user/resetToken').then(() => {
-            location.reload()
-          })
-        })
-      }
-      return Promise.reject(new Error(res.message || 'Error'))
-    } else {
-      return res
+  async response => {
+    if (response.status && response.status === 200 && response.data.status === 500) {
+      Message.error({ message: response.data.msg })
+      return
     }
+    if (response.data.status === 600) {
+      Message.error({ message: response.data.msg })
+      removeToken()
+    } else if (response.data.msg) {
+      Message.success({ message: response.data.msg })
+    }
+    console.log(response)
+    return response.data
   },
-  error => {
+  async error => {
     console.log('err' + error) // for debug
-    Message({
-      message: error.message,
-      type: 'error',
-      duration: 5 * 1000
-    })
+    if (error.response) {
+      if (error.response.status === 504 || error.response.status === 404) {
+        Message.error({ message: '服务器被吃了( ╯□╰ )' })
+      } else if (error.response.status === 403) {
+        Message.error({ message: '权限不足，请联系管理员' })
+      } else if (error.response.status === 401) {
+        Message.error({ message: '尚未登录，请登录' })
+      } else {
+        if (error.response.data.msg) {
+          Message.error({ message: error.response.data.msg })
+        } else {
+          Message.error({ message: '未知错误!' })
+        }
+      }
+    } else {
+      Message.error({ message: '网络错误!' })
+    }
     return Promise.reject(error)
   }
 )
+const base = 'http://localhost:8081'
 
-export default service
+export const postKeyValueRequest = (url, params) => {
+  return axios({
+    method: 'post',
+    url: `${base}${url}`,
+    data: params,
+    transformRequest: [function(data) {
+      let ret = ''
+      for (const i in data) {
+        ret += encodeURIComponent(i) + '=' + encodeURIComponent(data[i]) + '&'
+      }
+      return ret
+    }],
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded'
+    }
+  })
+}
+export const postRequest = (url, params) => {
+  console.log(params)
+  return axios({
+    method: 'post',
+    url: `${base}${url}`,
+    data: params
+  })
+}
+export const putRequest = (url, params) => {
+  return axios({
+    method: 'put',
+    url: `${base}${url}`,
+    data: params
+  })
+}
+export const getRequest = (url, params) => {
+  return axios({
+    method: 'get',
+    url: `${base}${url}`,
+    data: params
+  })
+}
+
+export const deleteRequest = (url, params) => {
+  return axios({
+    method: 'delete',
+    url: `${base}${url}`,
+    data: params
+  })
+}

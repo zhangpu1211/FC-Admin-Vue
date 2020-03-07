@@ -5,7 +5,6 @@ Vue.use(Router)
 
 /* Layout */
 import Layout from '@/layout'
-
 /**
  * Note: sub-menu only appear when route children.length >= 1
  * Detail see: https://panjiachen.github.io/vue-element-admin-site/guide/essentials/router-and-nav.html
@@ -30,31 +29,46 @@ import Layout from '@/layout'
  * a base page that does not have permission requirements
  * all roles can be accessed
  */
-export const constantRoutes = [
+export const StaticRouterMap = [
   {
     path: '/login',
     component: () => import('@/views/login/index'),
     hidden: true
   },
-
-  {
-    path: '/404',
-    component: () => import('@/views/404'),
-    hidden: true
-  },
-
   {
     path: '/',
     component: Layout,
     redirect: '/dashboard',
-    children: [{
-      path: 'dashboard',
-      name: 'Dashboard',
-      component: () => import('@/views/dashboard/index'),
-      meta: { title: 'Dashboard', icon: 'dashboard' }
-    }]
+    name: 'Dashboard',
+    meta: { title: '主页', icon: 'example' },
+    children: [
+      {
+        path: 'dashboard',
+        component: () => import('@/views/dashboard/index')
+      },
+      {
+        path: '404',
+        name: 'error',
+        component: () => import('@/views/404'),
+        hidden: true
+      }
+    ]
   },
+  {
+    path: '/redirect',
+    component: Layout,
+    name: 'redirect',
+    hidden: true,
+    children: [
+      {
+        path: '/redirect/:path*',
+        component: () => import('@/views/redirect/index')
+      }
+    ]
+  }
+]
 
+export const AsyncRouterMap = [
   {
     path: '/example',
     component: Layout,
@@ -80,6 +94,7 @@ export const constantRoutes = [
   {
     path: '/form',
     component: Layout,
+    name: 'from',
     children: [
       {
         path: 'index',
@@ -88,14 +103,8 @@ export const constantRoutes = [
         meta: { title: 'Form', icon: 'form' }
       }
     ]
-  }
-]
+  },
 
-/**
- * asyncRoutes
- * the routes that need to be dynamically loaded based on user roles
- */
-export const asyncRoutes = [
   {
     path: '/nested',
     component: Layout,
@@ -126,13 +135,15 @@ export const asyncRoutes = [
             children: [
               {
                 path: 'menu1-2-1',
-                component: () => import('@/views/nested/menu1/menu1-2/menu1-2-1'),
+                component: () =>
+                  import('@/views/nested/menu1/menu1-2/menu1-2-1'),
                 name: 'Menu1-2-1',
                 meta: { title: 'Menu1-2-1' }
               },
               {
                 path: 'menu1-2-2',
-                component: () => import('@/views/nested/menu1/menu1-2/menu1-2-2'),
+                component: () =>
+                  import('@/views/nested/menu1/menu1-2/menu1-2-2'),
                 name: 'Menu1-2-2',
                 meta: { title: 'Menu1-2-2' }
               }
@@ -152,28 +163,15 @@ export const asyncRoutes = [
         meta: { title: 'menu2' }
       }
     ]
-  },
-
-  {
-    path: 'external-link',
-    component: Layout,
-    children: [
-      {
-        path: 'https://panjiachen.github.io/vue-element-admin-site/#/',
-        meta: { title: 'External Link', icon: 'link' }
-      }
-    ]
-  },
-
-  // 404 page must be placed at the end !!!
-  { path: '*', redirect: '/404', hidden: true }
+  }
 ]
 
-const createRouter = () => new Router({
-  // mode: 'history', // require service support
-  scrollBehavior: () => ({ y: 0 }),
-  routes: constantRoutes
-})
+const createRouter = () =>
+  new Router({
+    // mode: 'history', // require service support
+    scrollBehavior: () => ({ y: 0 }),
+    routes: StaticRouterMap
+  })
 
 const router = createRouter()
 
