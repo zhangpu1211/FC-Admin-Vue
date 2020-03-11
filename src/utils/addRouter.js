@@ -40,6 +40,9 @@ export function addRouter(routerlist) {
   const router = []
   try {
     routerlist.forEach(e => {
+      if (e.children) {
+        e.resources = '/' + e.resources
+      }
       console.log(`@/views${e.component}`)
       let e_new = {
         path: e.resources,

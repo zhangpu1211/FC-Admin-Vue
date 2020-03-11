@@ -2,6 +2,7 @@ import axios from 'axios'
 import { Message } from 'element-ui'
 import store from '@/store'
 import { getToken, removeToken } from './auth'
+import router from '@/router'
 axios.interceptors.request.use(
   config => {
     // do something before request is sent
@@ -41,6 +42,8 @@ axios.interceptors.response.use(
     if (response.data.status === 600) {
       Message.error({ message: response.data.msg })
       removeToken()
+      router.replace('/')
+      return
     } else if (response.data.msg) {
       Message.success({ message: response.data.msg })
     }

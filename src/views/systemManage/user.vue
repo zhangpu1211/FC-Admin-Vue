@@ -31,6 +31,15 @@
           align="left"
         />
         <el-table-column
+          prop="avatar"
+          label="头像"
+          align="center"
+        >
+          <template slot-scope="scope">
+            <img v-if="scope.row.avatar" :src="'http://localhost:8081'+scope.row.avatar" class="avatar">
+          </template>
+        </el-table-column>
+        <el-table-column
           prop="sex"
           label="性别"
           align="left"
@@ -160,6 +169,7 @@ export default {
   name: 'User',
   data() {
     return {
+      size: 'small',
       dialogVisible: false,
       sysUser: [],
       loading: false,
