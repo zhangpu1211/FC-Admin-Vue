@@ -55,36 +55,14 @@
         style="width:100%;margin-bottom:30px;"
         @click.native.prevent="handleLogin"
       >Login</el-button>
-
-      <div class="tips">
-        <span style="margin-right:20px;">username: admin</span>
-        <span style="margin-right:23px;">password: 随意</span>
-        <br>
-        <span
-          style="margin-right:23px;"
-        >admin的与editor渲染的路由不一样,数据来源于 easy-mock</span>
-      </div>
-      <div class="tips">
-        <span style="margin-right:23px;">username: editor</span>
-        <span style="margin-right:23px;">password: 随意</span>
-      </div>
     </el-form>
   </div>
 </template>
 
 <script>
-import { validUsername } from '@/utils/validate'
-
 export default {
   name: 'Login',
   data() {
-    const validateUsername = (rule, value, callback) => {
-      if (!validUsername(value)) {
-        callback(new Error('Please enter the correct user name'))
-      } else {
-        callback()
-      }
-    }
     const validatePassword = (rule, value, callback) => {
       if (value.length < 3) {
         callback(new Error('The password can not be less than 6 digits'))
@@ -98,7 +76,7 @@ export default {
         password: '123'
       },
       loginRules: {
-        username: [{ required: true, trigger: 'blur', validator: validateUsername }],
+        username: [{ required: true, trigger: 'blur' }],
         password: [{ required: true, trigger: 'blur', validator: validatePassword }]
       },
       loading: false,

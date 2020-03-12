@@ -69,12 +69,16 @@ function gotoRouter1(to, next) {
 }
 async function gotoRouter(to, next) {
   const res = await Login.getRouter()
-  if (res) {
-    console.log('解析后端动态路由', res)
-    const asyncRouter = addRouter(res) // 进行递归解析
-    // store.dispatch('user/setroles', res.data.permit)
+  if (res.obj) {
+    console.log('解析后端动态路由', res.obj)
+    const asyncRouter = addRouter(res.obj.sidebar) // 进行递归解析
+    asyncRouter.push({
+      path: '*',
+      redirect: '/404',
+      hidden: true
+    })
+    // store.dispatch('user/setroles', res.obj.resources)
     router.addRoutes(asyncRouter) // vue-router提供的addRouter方法进行路由拼接
-    console.log(asyncRouter)
     store.dispatch('user/setRouterList', asyncRouter) // 存储到vuex
     // store.dispatch('user/GetInfo')
     store.commit('user/set_init', true)

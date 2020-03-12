@@ -71,10 +71,5 @@ export function addRouter(routerlist) {
     console.error(error)
     return []
   }
-  router.push({
-    path: '*',
-    redirect: '/404',
-    hidden: true
-  })
   return router
 }

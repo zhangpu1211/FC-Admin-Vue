@@ -205,7 +205,7 @@ export default {
       this.$refs.tree.setCheckedKeys(this.selectedMenus)
     },
     async doUpdateMenus() {
-      const selectedKeys = this.$refs.tree.getCheckedKeys(true)
+      const selectedKeys = this.$refs.tree.getCheckedKeys()
       let url = '?rid=' + this.rid
       selectedKeys.forEach(key => {
         url += '&mids=' + key

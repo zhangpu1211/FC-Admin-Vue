@@ -23,7 +23,7 @@ class SysMenu {
     const res = await deleteRequest('/system/menu/delete/' + id)
     return res
   }
-
 }
+
 export default new SysMenu()
 
