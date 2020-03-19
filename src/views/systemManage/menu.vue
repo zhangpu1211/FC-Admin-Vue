@@ -141,7 +141,7 @@
           </el-radio-group>
         </el-form-item>
         <el-form-item label="后台路径" prop="url">
-          <el-input v-model="menuData.url"/>
+          <el-input v-model="menuData.url" />
         </el-form-item>
         <el-form-item label="资源编码" prop="resources">
           <el-input v-model="menuData.resources" />
@@ -152,10 +152,10 @@
         <el-form-item label="权重">
           <el-input v-model="menuData.sort" />
         </el-form-item>
-        <el-form-item label="菜单图标">
+        <el-form-item v-if="buttonMenuVisible" label="菜单图标">
           <el-input v-model="menuData.icon" />
         </el-form-item>
-        <el-form-item label="一级菜单跳转">
+        <el-form-item v-if="buttonMenuVisible" label="一级菜单跳转">
           <el-input v-model="menuData.redirect" />
         </el-form-item>
         <el-form-item label="上级菜单">
@@ -210,9 +210,6 @@ export default {
       rules: {
         name: [
           { required: true, message: '请输入菜名称', trigger: 'blur' }
-        ],
-        url: [
-          { required: true, message: '请输入', trigger: 'blur' }
         ],
         resources: [
           { required: true, message: '请输入', trigger: 'blur' }

@@ -54,10 +54,17 @@
           align="left"
         />
         <el-table-column
-          prop="email"
-          label="邮箱"
+          prop="rname"
+          label="关联角色"
           align="left"
-        />
+          width="180"
+        >
+          <template slot-scope="scope">
+            <div class="tag-group" v-if="scope.row.roles != null">
+              <el-tag v-for="(item,index) in scope.row.roles" :key="index" style="margin:2px;">{{item.nameZh}}</el-tag>
+            </div>
+          </template>
+        </el-table-column>
         <el-table-column
           prop="flag"
           label="是否禁用"
@@ -86,15 +93,17 @@
           prop="email"
           label="邮箱"
           align="left"
+          width="160"
         />
         <el-table-column
           fixed="right"
-          width="200"
+          width="280"
           label="操作"
         >
           <template slot-scope="scope">
-            <el-button style="padding: 3px" size="small" @click="showEditView(scope.row)">编辑</el-button>
-            <el-button style="padding: 3px" size="small" type="danger" @click="deleteSysUser(scope.row)">删除
+            <el-button type="primary" size="small" @click="showRoleView(scope.row)">分配角色</el-button>
+            <el-button v-permission="['sys:user:edit']" size="small" @click="showEditView(scope.row)">编辑</el-button>
+            <el-button v-permission="['sys:user:delete']" size="small" type="danger" @click="deleteSysUser(scope.row)">删除
             </el-button>
           </template>
         </el-table-column>
@@ -140,23 +149,40 @@
             :show-file-list="false"
             :on-success="handleAvatarSuccess"
             :headers="headers"
-            :before-upload="beforeAvatarUpload">
+            :before-upload="beforeAvatarUpload"
+          >
             <img v-if="form.avatar" :src="avatarUrl" class="avatar">
-            <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+            <i v-else class="el-icon-plus avatar-uploader-icon" />
           </el-upload>
         </el-form-item>
         <el-form-item label="状态:" prop="flag">
           <el-switch
             v-model="form.flag"
             active-color="#13ce66"
-            inactive-color="#ff4949">
-          </el-switch>
+            inactive-color="#ff4949"
+          />
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
         <el-button @click="dialogVisible = false"> 取消 </el-button>
         <el-button type="primary" @click="submitForm"> 确定 </el-button>
       </span>
+    </el-dialog>
+    <el-dialog
+      title="分配角色"
+      :visible.sync="showRoleDialog"
+      width="30%"
+    >
+      <el-select v-model="selectedRoles" multiple placeholder="请选择">
+        <el-option
+          v-for="item in roles"
+          :key="item.id"
+          :label="item.nameZh"
+          :value="item.id">
+        </el-option>
+      </el-select>
+      <el-button @click="cancleUserRole">取 消</el-button>
+      <el-button type="primary" @click="giveUserRole">确 定</el-button>
     </el-dialog>
   </div>
 
@@ -165,6 +191,7 @@
 <script>
 import SysUser from '@/api/user'
 import { getToken } from '@/utils/auth'
+import SysRole from '../../api/role'
 export default {
   name: 'User',
   data() {
@@ -209,7 +236,11 @@ export default {
         flag: [
           { required: true, message: '请选择状态', trigger: 'blur' }
         ]
-      }
+      },
+      showRoleDialog: false,
+      roles: [],
+      selectedRoles: [],
+      userRole: null
     }
   },
   computed: {
@@ -224,8 +255,13 @@ export default {
   },
   mounted() {
     this.initData()
+    this.initRoles()
   },
   methods: {
+    async initRoles() {
+      const resp = await SysRole.roleList()
+      this.roles = resp
+    },
     async initData() {
       this.loading = true
       let url = '/system/user/list/?page=' + this.listQuery.page + '&size=' + this.listQuery.size
@@ -233,7 +269,6 @@ export default {
         url += '&username=' + this.listQuery.username
       }
       const res = await SysUser.userList(url)
-      console.log(res)
       this.loading = false
       this.sysUser = res.data
       this.total = res.total
@@ -255,7 +290,6 @@ export default {
       console.log(data)
     },
     submitForm() {
-      console.log(this.form)
       if (this.form.id) {
         const res = SysUser.update(this.form)
         console.log(res)
@@ -288,7 +322,7 @@ export default {
       if (newdate === undefined) {
         return ''
       }
-      return this.$moment(newdate).format('YYYY-MM-DD HH:mm')
+      return this.$moment(newdate).format('YYYY-MM-DD')
     },
     resetForm() {
       this.form = {
@@ -324,6 +358,29 @@ export default {
         this.$message.error('上传头像图片大小不能超过 2MB!')
       }
       return isJPG && isLt2M
+    },
+    showRoleView(row) {
+      this.userRole = row
+      if (row.roles) {
+        const ids = row.roles.map(role => role.id)
+        this.selectedRoles = ids
+      }
+      this.showRoleDialog = true
+    },
+    giveUserRole() {
+      console.log(this.userRole.id, this.selectedRoles)
+      console.log('111')
+      SysUser.updateUserRole(this.userRole.id, this.selectedRoles)
+      this.resetUserRole()
+      this.initData()
+    },
+    cancleUserRole() {
+      this.resetUserRole()
+    },
+    resetUserRole() {
+      this.selectedRoles = []
+      this.showRoleDialog = false
+      this.userRole = []
     }
   }
 }

@@ -1,7 +1,8 @@
 import Login from '@/api/login'
-// import { getInfo } from '@/api/user'
+import SysUser from '@/api/user'
 import { getToken, setToken, removeToken } from '@/utils/auth'
 import { StaticRouterMap } from '@/router/index'
+import { baseUrl } from '@/utils/constVarible'
 const user = {
   namespaced: true,
   state: {
@@ -54,13 +55,18 @@ const user = {
         commit('SET_TOKEN', response.token)
         commit('set_user', response.userInfo)
         commit('SET_NAME', response.userInfo.username)
-        commit('SET_AVATAR', response.userInfo.avatar)
+        commit('SET_AVATAR', baseUrl + response.userInfo.avatar)
         return true
       } else {
         return false
       }
     },
-
+    async GetInfo({ commit, state }) {
+      const res = await SysUser.userInfo()
+      commit('set_user', res)
+      commit('SET_NAME', res.username)
+      commit('SET_AVATAR', baseUrl + res.avatar)
+    },
     // 获取用户信息
     // GetInfo({ commit, state }) {
     //   return new Promise((resolve, reject) => {

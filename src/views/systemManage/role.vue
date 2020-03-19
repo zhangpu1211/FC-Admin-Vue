@@ -171,7 +171,14 @@ export default {
       this.rid = rid
       const mids = await SysRole.getOwnMenus(rid)
       this.selectedMenus = mids
-      this.$refs.tree.setCheckedKeys(mids)
+      // this.$refs.tree.setCheckedKeys(mids)
+      this.selectedMenus.forEach((i, n) => {
+        var node = this.$refs.tree.getNode(i)
+        console.log(node.isLeaf)
+        if (node.isLeaf) {
+          this.$refs.tree.setChecked(node, true)
+        }
+      })
     },
     showEditView(data) {
       console.log(data)
@@ -206,8 +213,10 @@ export default {
     },
     async doUpdateMenus() {
       const selectedKeys = this.$refs.tree.getCheckedKeys()
+      const selectedHalfKeys = this.$refs.tree.getHalfCheckedKeys()
+      const finalKeys = selectedKeys.concat(selectedHalfKeys)
       let url = '?rid=' + this.rid
-      selectedKeys.forEach(key => {
+      finalKeys.forEach(key => {
         url += '&mids=' + key
       })
       const resp = await SysRole.updateOwnMenus(url)

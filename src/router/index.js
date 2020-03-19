@@ -44,7 +44,8 @@ export const StaticRouterMap = [
     children: [
       {
         path: 'dashboard',
-        component: () => import('@/views/dashboard/index')
+        component: () => import('@/views/dashboard/index'),
+        meta: { title: 'dashboard', icon: 'example' }
       },
       {
         path: '404',

@@ -14,16 +14,17 @@ router.beforeEach((to, from, next) => {
   if (getToken()) {
     // 判断cookice是否存在 不存在即为未登录
     if (to.path !== '/login') {
-      if (user.state.init) {
+      if (user.state.RouterList && user.state.RouterList.length > 0) {
         // 获取了动态路由 data一定true,就无需再次请求 直接放行
         next()
+        NProgress.done()
       } else {
         // data为false,一定没有获取动态路由,就跳转到获取动态路由的方法
         gotoRouter(to, next)
       }
     } else {
       Message({ message: '您已经登录', type: 'info' })
-      next('/')
+      next('/dashboard')
     }
   } else {
     if (whiteList.indexOf(to.path) !== -1) {
@@ -77,10 +78,10 @@ async function gotoRouter(to, next) {
       redirect: '/404',
       hidden: true
     })
-    // store.dispatch('user/setroles', res.obj.resources)
+    store.dispatch('user/setroles', res.obj.resources)
     router.addRoutes(asyncRouter) // vue-router提供的addRouter方法进行路由拼接
     store.dispatch('user/setRouterList', asyncRouter) // 存储到vuex
-    // store.dispatch('user/GetInfo')
+    await store.dispatch('user/GetInfo')
     store.commit('user/set_init', true)
     next({ ...to, replace: true }) // hack方法 确保addRoutes已完成
   }

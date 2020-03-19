@@ -2,6 +2,7 @@ import axios from 'axios'
 import { Message } from 'element-ui'
 import store from '@/store'
 import { getToken, removeToken } from './auth'
+import { baseUrl } from '@/utils/constVarible'
 import router from '@/router'
 axios.interceptors.request.use(
   config => {
@@ -72,7 +73,7 @@ axios.interceptors.response.use(
     return Promise.reject(error)
   }
 )
-const base = 'http://localhost:8081'
+const base = baseUrl
 
 export const postKeyValueRequest = (url, params) => {
   return axios({
