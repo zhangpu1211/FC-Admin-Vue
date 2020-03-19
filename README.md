@@ -7,6 +7,23 @@ fc-admin前后端分离通用系统前端页面，左侧菜单为后端动态路
 - Vue
 - Element UI
 - Vuex
+- axios
+
+## Getting started
+
+```javascript
+# clone the project
+git clone https://github.com/zhangpu1211/FC-Admin-Vue.git
+
+# enter the project directory
+cd vue-element-admin
+
+# install dependency
+npm install
+
+# develop
+npm run dev
+```
 
 #### 登录页
 
